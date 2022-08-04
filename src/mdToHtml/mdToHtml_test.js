@@ -1,14 +1,9 @@
 let render = require('./index');
+let {CHANGELOG_PATH} = require('./config')
 
 
 let fs = require('fs');
-var path = require('path')
-var changeLogMdPath = path.resolve(__dirname,'../static/CHANGELOG.md')
-
-var oldContent = fs.readFileSync(changeLogMdPath).toString()
-console.log(oldContent)
-
-
+var oldContent = fs.readFileSync(CHANGELOG_PATH).toString()
 const content = render(oldContent);
 console.log(content)
 

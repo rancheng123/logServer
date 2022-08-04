@@ -2,8 +2,10 @@ const Koa = require('koa');
 const serve = require('koa-static');
 let fs = require('fs');
 var path = require('path')
+const koaBody = require('koa-body');
 var changeLogMdPath = path.resolve(__dirname,'./src/static/CHANGELOG.md')
 var app = new Koa();
+app.use(koaBody());
 app.use(serve(process.cwd() + '/src/static'));
 
 
@@ -19,8 +21,8 @@ app.listen(3001,()=>{
 let render = require('./src/mdToHtml/index')
 
 
-//工作流列表
-router.get('/123', (ctx, next) => {
+//获取更新日志
+router.get('/release/logs/get', (ctx, next) => {
 
     var oldContent = fs.readFileSync(changeLogMdPath).toString()
     const content = render(oldContent);
@@ -43,6 +45,22 @@ router.get('/123', (ctx, next) => {
 </body>
 </html>
     `;
+});
+
+
+
+let {updateLog} = require('./src/mdToHtml/updateMd')
+router.post('/release/logs/update', (ctx, next) => {
+    let {version, contents} = JSON.parse(ctx.request.body)
+    updateLog({
+        version: version,
+        partConent: contents
+    })
+    console.log('update')
+    ctx.body = {
+        code: 10000,
+        msg: '日志更新成功'
+    }
 });
 
 
